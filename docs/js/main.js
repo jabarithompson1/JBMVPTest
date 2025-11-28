@@ -411,6 +411,224 @@ function initStarfield() {
 
 // Page initialiser
 
+function renderCheckoutPage() {
+    const orderItems = document.getElementById("orderItems");
+    const subtotalEl = document.getElementById("subtotal");
+    const shippingEl = document.getElementById("shipping");
+    const taxEl = document.getElementById("tax");
+    const totalEl = document.getElementById("total");
+    const placeOrderBtn = document.getElementById("placeOrderBtn");
+    
+    if (!orderItems || !subtotalEl || !shippingEl || !taxEl || !totalEl) {
+        return;
+    }
+
+    const basket = loadBasket();
+    
+    // Clear existing items
+    orderItems.innerHTML = "";
+    
+    if (basket.length === 0) {
+        orderItems.innerHTML = "<p>Your basket is empty.</p>";
+        placeOrderBtn.disabled = true;
+        return;
+    }
+
+    let subtotal = 0;
+
+    basket.forEach(item => {
+        const product = products.find(p => p.id === item.productId);
+        if (!product) {
+            return;
+        }
+        
+        const lineTotal = product.price * item.quantity;
+        subtotal += lineTotal;
+
+        const orderItem = document.createElement("div");
+        orderItem.className = "order-item";
+        
+        orderItem.innerHTML = `
+            <div class="item-image">
+                <img src="images/${product.id === 1 ? 'aurora-oud.png' : product.id === 2 ? 'citrus-dawn.png' : 'velvet-iris.png'}" alt="${product.name}">
+            </div>
+            <div class="item-details">
+                <h4>${product.name}</h4>
+                <p>${product.brand}</p>
+                <p class="item-notes">${product.notes}</p>
+                <p class="item-price">£${product.price.toFixed(2)} each</p>
+            </div>
+            <div class="item-total">
+                £${lineTotal.toFixed(2)}
+                <br>
+                <small>Qty: ${item.quantity}</small>
+            </div>
+        `;
+
+        orderItems.appendChild(orderItem);
+    });
+
+    // Calculate totals
+    const shipping = subtotal > 75 ? 0 : 4.99;
+    const taxRate = 0.20; // 20% VAT
+    const tax = subtotal * taxRate;
+    const total = subtotal + shipping + tax;
+
+    // Update totals display
+    subtotalEl.textContent = `£${subtotal.toFixed(2)}`;
+    shippingEl.textContent = shipping === 0 ? "FREE" : `£${shipping.toFixed(2)}`;
+    taxEl.textContent = `£${tax.toFixed(2)}`;
+    totalEl.innerHTML = `<strong>£${total.toFixed(2)}</strong>`;
+
+    // Setup billing address toggle
+    const sameAsShipping = document.getElementById("sameAsShipping");
+    const billingAddress = document.getElementById("billingAddress");
+    
+    if (sameAsShipping && billingAddress) {
+        sameAsShipping.addEventListener("change", () => {
+            billingAddress.style.display = sameAsShipping.checked ? "none" : "block";
+        });
+    }
+
+    // Setup payment method handling
+    const paymentMethods = document.querySelectorAll('input[name="payment"]');
+    const cardDetails = document.getElementById("cardDetails");
+    
+    if (paymentMethods.length && cardDetails) {
+        paymentMethods.forEach(method => {
+            method.addEventListener("change", () => {
+                if (method.value === "card") {
+                    cardDetails.style.display = "block";
+                } else {
+                    cardDetails.style.display = "none";
+                }
+            });
+        });
+    }
+
+    // Setup form validation and submission
+    const checkoutForm = document.createElement("form");
+    checkoutForm.id = "checkoutForm";
+    
+    // Wrap existing form elements in a form for proper submission
+    const formsContainer = document.querySelector(".checkout-forms");
+    if (formsContainer && !formsContainer.querySelector("form")) {
+        const formContent = formsContainer.innerHTML;
+        formsContainer.innerHTML = "";
+        formsContainer.appendChild(checkoutForm);
+        checkoutForm.innerHTML = formContent;
+        
+        // Move the place order button to the summary section where it should be
+        const placeOrderBtnContainer = document.querySelector(".checkout-summary");
+        if (placeOrderBtnContainer && placeOrderBtnContainer.contains(placeOrderBtn)) {
+            // Button is already in the right place
+        }
+    }
+
+    if (placeOrderBtn) {
+        placeOrderBtn.addEventListener("click", handlePlaceOrder);
+    }
+
+    function handlePlaceOrder() {
+        const form = document.getElementById("checkoutForm");
+        if (!form) return;
+
+        // Validate required fields
+        const requiredFields = [
+            { id: "email", name: "Email Address" },
+            { id: "firstName", name: "First Name" },
+            { id: "lastName", name: "Last Name" },
+            { id: "address1", name: "Address" },
+            { id: "city", name: "City" },
+            { id: "postcode", name: "Postcode" },
+            { id: "country", name: "Country" }
+        ];
+
+        for (let field of requiredFields) {
+            const element = document.getElementById(field.id);
+            if (!element || !element.value.trim()) {
+                customAlert(`Please fill in the ${field.name} field.`);
+                if (element) element.focus();
+                return;
+            }
+        }
+
+        // Email validation
+        const email = document.getElementById("email").value;
+        if (!email.includes("@")) {
+            customAlert("Please enter a valid email address.");
+            document.getElementById("email").focus();
+            return;
+        }
+
+        // If billing address is different, validate billing fields too
+        const sameAsShipping = document.getElementById("sameAsShipping");
+        if (sameAsShipping && !sameAsShipping.checked) {
+            const billingRequired = [
+                { id: "billingFirstName", name: "Billing First Name" },
+                { id: "billingLastName", name: "Billing Last Name" },
+                { id: "billingAddress1", name: "Billing Address" },
+                { id: "billingCity", name: "Billing City" },
+                { id: "billingPostcode", name: "Billing Postcode" },
+                { id: "billingCountry", name: "Billing Country" }
+            ];
+
+            for (let field of billingRequired) {
+                const element = document.getElementById(field.id);
+                if (!element || !element.value.trim()) {
+                    customAlert(`Please fill in the ${field.name} field.`);
+                    if (element) element.focus();
+                    return;
+                }
+            }
+        }
+
+        // Validate card details if card payment selected
+        const cardPayment = document.getElementById("card");
+        if (cardPayment && cardPayment.checked) {
+            const cardNumber = document.getElementById("cardNumber").value.replace(/\s/g, "");
+            const cardName = document.getElementById("cardName").value.trim();
+            const expiry = document.getElementById("expiry").value.trim();
+            const cvv = document.getElementById("cvv").value.trim();
+
+            if (!cardNumber || cardNumber.length < 16) {
+                customAlert("Please enter a valid 16-digit card number.");
+                document.getElementById("cardNumber").focus();
+                return;
+            }
+
+            if (!cardName) {
+                customAlert("Please enter the name on the card.");
+                document.getElementById("cardName").focus();
+                return;
+            }
+
+            if (!expiry || !/^\d{2}\/\d{2}$/.test(expiry)) {
+                customAlert("Please enter expiry date in MM/YY format.");
+                document.getElementById("expiry").focus();
+                return;
+            }
+
+            if (!cvv || cvv.length < 3) {
+                customAlert("Please enter a valid CVV.");
+                document.getElementById("cvv").focus();
+                return;
+            }
+        }
+
+        // Process the order
+        customAlert("Order placed successfully! This is a demo - no real payment has been processed.");
+        
+        // Clear the basket
+        localStorage.setItem(BASKET_STORAGE_KEY, JSON.stringify([]));
+        
+        // Redirect to thank you page or home
+        setTimeout(() => {
+            window.location.href = "index.html";
+        }, 2000);
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const page = document.body.getAttribute("data-page");
 
@@ -424,6 +642,8 @@ document.addEventListener("DOMContentLoaded", () => {
         renderProductsPage();
     } else if (page === "basket") {
         renderBasketPage();
+    } else if (page === "checkout") {
+        renderCheckoutPage();
     }
 });
 // Scroll reveal animations
