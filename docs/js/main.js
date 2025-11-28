@@ -238,13 +238,13 @@ function renderBasketPage() {
     summary.innerHTML = `
         <p><strong>Total:</strong> £${total.toFixed(2)}</p>
         <button id="clearBasketBtn" class="btn-secondary" style="margin-right: 1rem;">Clear basket</button>
-        <button id="mockCheckoutBtn" class="btn-primary">Proceed to checkout</button>
+        <button id="checkoutBtn" class="btn-primary">Proceed to checkout</button>
     `;
 
-    const checkoutBtn = document.getElementById("mockCheckoutBtn");
+    const checkoutBtn = document.getElementById("checkoutBtn");
     if (checkoutBtn) {
         checkoutBtn.addEventListener("click", () => {
-            customAlert("Checkout flow will be implemented in the full version. For MVP this is a demo only.");
+            window.location.href = "checkout.html";
         });
     }
 
@@ -487,6 +487,36 @@ function renderCheckoutPage() {
     if (sameAsShipping && billingAddress) {
         sameAsShipping.addEventListener("change", () => {
             billingAddress.style.display = sameAsShipping.checked ? "none" : "block";
+        });
+    }
+
+    // Add input formatting for better UX
+    const cardNumber = document.getElementById("cardNumber");
+    const expiry = document.getElementById("expiry");
+    const cvv = document.getElementById("cvv");
+    
+    if (cardNumber) {
+        cardNumber.addEventListener("input", (e) => {
+            let value = e.target.value.replace(/\s/g, "").replace(/[^0-9]/gi, "");
+            let formattedValue = value.match(/.{1,4}/g)?.join(" ") || value;
+            if (formattedValue.length > 19) formattedValue = formattedValue.substr(0, 19);
+            e.target.value = formattedValue;
+        });
+    }
+    
+    if (expiry) {
+        expiry.addEventListener("input", (e) => {
+            let value = e.target.value.replace(/\D/g, "");
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + "/" + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+    }
+    
+    if (cvv) {
+        cvv.addEventListener("input", (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, "");
         });
     }
 
