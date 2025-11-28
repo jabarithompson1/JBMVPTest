@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Luminous Scents - Checkout</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/main.js" defer></script>
+</head>
+<body data-page="checkout">
+    <div class="parallax-stars">
+        <canvas id="starfield"></canvas>
+        <canvas id="trailCanvas"></canvas>
+    </div>
+    <header class="main-header">
+        <div class="logo">
+            <img src="images/luminous-logo.png" alt="Luminous Scents logo" class="logo-image">
+            <div class="logo-text">
+                <h1>Luminous Scents</h1>
+                <p>Illuminating the story behind every fragrance</p>
+            </div>
+        </div>
+        <nav class="navbar">
+            <a href="index.html">Home</a>
+            <a href="products.html">Fragrances</a>
+            <a href="basket.html">Basket</a>
+            <a href="account.html">Account</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <h2>Checkout</h2>
+            <p>Complete your order with our secure checkout process</p>
+        </section>
+
+        <div class="checkout-container">
+            <!-- Left Column: Forms -->
+            <div class="checkout-forms">
+                <!-- Contact Information -->
+                <section class="checkout-section">
+                    <h3>Contact Information</h3>
+                    <div class="form-row">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+                    </div>
+                    <div class="form-row">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+44 7xxx xxx xxx">
+                    </div>
+                </section>
+
+                <!-- Shipping Address -->
+                <section class="checkout-section">
+                    <h3>Shipping Address</h3>
+                    <div class="form-row">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" name="firstName" required placeholder="John">
+                    </div>
+                    <div class="form-row">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" name="lastName" required placeholder="Doe">
+                    </div>
+                    <div class="form-row">
+                        <label for="address1">Address Line 1</label>
+                        <input type="text" id="address1" name="address1" required placeholder="123 Main Street">
+                    </div>
+                    <div class="form-row">
+                        <label for="address2">Address Line 2 (Optional)</label>
+                        <input type="text" id="address2" name="address2" placeholder="Apartment, suite, etc.">
+                    </div>
+                    <div class="form-row">
+                        <label for="city">City</label>
+                        <input type="text" id="city" name="city" required placeholder="London">
+                    </div>
+                    <div class="form-row">
+                        <label for="county">County</label>
+                        <input type="text" id="county" name="county" placeholder="Greater London">
+                    </div>
+                    <div class="form-row">
+                        <label for="postcode">Postcode</label>
+                        <input type="text" id="postcode" name="postcode" required placeholder="SW1A 1AA">
+                    </div>
+                    <div class="form-row">
+                        <label for="country">Country</label>
+                        <select id="country" name="country" required>
+                            <option value="">Select Country</option>
+                            <option value="GB">United Kingdom</option>
+                            <option value="US">United States</option>
+                            <option value="CA">Canada</option>
+                            <option value="AU">Australia</option>
+                            <option value="DE">Germany</option>
+                            <option value="FR">France</option>
+                            <option value="IT">Italy</option>
+                            <option value="ES">Spain</option>
+                        </select>
+                    </div>
+                </section>
+
+                <!-- Billing Address -->
+                <section class="checkout-section">
+                    <div class="billing-toggle">
+                        <input type="checkbox" id="sameAsShipping" name="sameAsShipping" checked>
+                        <label for="sameAsShipping">Billing address same as shipping</label>
+                    </div>
+                    
+                    <div id="billingAddress" class="billing-address" style="display: none;">
+                        <h4>Billing Address</h4>
+                        <div class="form-row">
+                            <label for="billingFirstName">First Name</label>
+                            <input type="text" id="billingFirstName" name="billingFirstName" placeholder="John">
+                        </div>
+                        <div class="form-row">
+                            <label for="billingLastName">Last Name</label>
+                            <input type="text" id="billingLastName" name="billingLastName" placeholder="Doe">
+                        </div>
+                        <div class="form-row">
+                            <label for="billingAddress1">Address Line 1</label>
+                            <input type="text" id="billingAddress1" name="billingAddress1" placeholder="123 Main Street">
+                        </div>
+                        <div class="form-row">
+                            <label for="billingAddress2">Address Line 2 (Optional)</label>
+                            <input type="text" id="billingAddress2" name="billingAddress2" placeholder="Apartment, suite, etc.">
+                        </div>
+                        <div class="form-row">
+                            <label for="billingCity">City</label>
+                            <input type="text" id="billingCity" name="billingCity" placeholder="London">
+                        </div>
+                        <div class="form-row">
+                            <label for="billingCounty">County</label>
+                            <input type="text" id="billingCounty" name="billingCounty" placeholder="Greater London">
+                        </div>
+                        <div class="form-row">
+                            <label for="billingPostcode">Postcode</label>
+                            <input type="text" id="billingPostcode" name="billingPostcode" placeholder="SW1A 1AA">
+                        </div>
+                        <div class="form-row">
+                            <label for="billingCountry">Country</label>
+                            <select id="billingCountry" name="billingCountry">
+                                <option value="">Select Country</option>
+                                <option value="GB">United Kingdom</option>
+                                <option value="US">United States</option>
+                                <option value="CA">Canada</option>
+                                <option value="AU">Australia</option>
+                                <option value="DE">Germany</option>
+                                <option value="FR">France</option>
+                                <option value="IT">Italy</option>
+                                <option value="ES">Spain</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Payment Method -->
+                <section class="checkout-section">
+                    <h3>Payment Method</h3>
+                    <div class="payment-methods">
+                        <div class="payment-option">
+                            <input type="radio" id="card" name="payment" value="card" checked>
+                            <label for="card">Credit/Debit Card</label>
+                        </div>
+                        <div class="payment-option">
+                            <input type="radio" id="paypal" name="payment" value="paypal">
+                            <label for="paypal">PayPal</label>
+                        </div>
+                        <div class="payment-option">
+                            <input type="radio" id="applepay" name="payment" value="applepay">
+                            <label for="applepay">Apple Pay</label>
+                        </div>
+                    </div>
+                    
+                    <div id="cardDetails" class="card-details">
+                        <div class="form-row">
+                            <label for="cardNumber">Card Number</label>
+                            <input type="text" id="cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                        </div>
+                        <div class="form-row">
+                            <label for="cardName">Name on Card</label>
+                            <input type="text" id="cardName" name="cardName" placeholder="John Doe">
+                        </div>
+                        <div class="card-row">
+                            <div class="form-row">
+                                <label for="expiry">Expiry Date</label>
+                                <input type="text" id="expiry" name="expiry" placeholder="MM/YY" maxlength="5">
+                            </div>
+                            <div class="form-row">
+                                <label for="cvv">CVV</label>
+                                <input type="text" id="cvv" name="cvv" placeholder="123" maxlength="4">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column: Order Summary -->
+            <div class="checkout-summary">
+                <h3>Order Summary</h3>
+                <div id="orderItems" class="order-items">
+                    <!-- Order items will be populated by JavaScript -->
+                </div>
+                <div class="order-totals">
+                    <div class="total-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">£0.00</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Shipping:</span>
+                        <span id="shipping">£4.99</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Tax:</span>
+                        <span id="tax">£0.00</span>
+                    </div>
+                    <div class="total-row total">
+                        <span><strong>Total:</strong></span>
+                        <span id="total"><strong>£0.00</strong></span>
+                    </div>
+                </div>
+                
+                <div class="delivery-info">
+                    <h4>Delivery Information</h4>
+                    <p><strong>Estimated Delivery:</strong></p>
+                    <p>3-5 business days</p>
+                    <p>Free standard shipping on orders over £75</p>
+                </div>
+
+                <button id="placeOrderBtn" class="btn-primary place-order-btn">
+                    Place Order
+                </button>
+                
+                <div class="security-info">
+                    <p><small>🔒 Your information is secure and encrypted</small></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 Luminous Scents. CS2TP Team 64.</p>
+    </footer>
+</body>
+</html>
