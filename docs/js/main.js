@@ -773,3 +773,111 @@ function initMouseTrail() {
     
     animate();
 }
+
+// Search functionality
+function initSearch() {
+    const searchInput = document.getElementById("searchInput");
+    const searchButton = document.getElementById("searchButton");
+    const searchSuggestions = document.getElementById("searchSuggestions");
+    
+    if (!searchInput || !searchButton || !searchSuggestions) {
+        return; // Search elements not found on this page
+    }
+    
+    // Search through products data
+    function searchProducts(query) {
+        if (!query.trim()) {
+            return [];
+        }
+        
+        const searchTerm = query.toLowerCase();
+        return products.filter(product => {
+            return (
+                product.name.toLowerCase().includes(searchTerm) ||
+                product.brand.toLowerCase().includes(searchTerm) ||
+                product.notes.toLowerCase().includes(searchTerm) ||
+                product.description.toLowerCase().includes(searchTerm)
+            );
+        });
+    }
+    
+    // Display search suggestions
+    function displaySuggestions(results) {
+        if (results.length === 0) {
+            searchSuggestions.innerHTML = '<div class="suggestion-item no-results">No fragrances found</div>';
+        } else {
+            searchSuggestions.innerHTML = results.map(product => `
+                <div class="suggestion-item" data-product-id="${product.id}">
+                    <img src="images/${product.id === 1 ? 'aurora-oud.png' : product.id === 2 ? 'citrus-dawn.png' : 'velvet-iris.png'}" alt="${product.name}">
+                    <div class="suggestion-details">
+                        <h4>${product.name}</h4>
+                        <p>${product.notes}</p>
+                    </div>
+                    <div class="suggestion-price">£${product.price.toFixed(2)}</div>
+                </div>
+            `).join('');
+        }
+        searchSuggestions.style.display = 'block';
+    }
+    
+    // Handle search input
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value;
+        if (query.length >= 2) {
+            const results = searchProducts(query);
+            displaySuggestions(results);
+        } else {
+            searchSuggestions.style.display = 'none';
+        }
+    });
+    
+    // Handle search button click
+    searchButton.addEventListener('click', () => {
+        const query = searchInput.value;
+        if (query.trim()) {
+            // For now, redirect to products page with search term
+            // In a full implementation, this could show results directly
+            window.location.href = `products.html?search=${encodeURIComponent(query)}`;
+        }
+    });
+    
+    // Handle Enter key
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const query = searchInput.value;
+            if (query.trim()) {
+                window.location.href = `products.html?search=${encodeURIComponent(query)}`;
+            }
+        }
+    });
+    
+    // Handle suggestion clicks
+    searchSuggestions.addEventListener('click', (e) => {
+        const suggestionItem = e.target.closest('.suggestion-item');
+        if (suggestionItem && suggestionItem.dataset.productId) {
+            const productId = parseInt(suggestionItem.dataset.productId);
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                // Add to basket and show confirmation
+                addToBasket(productId);
+                searchSuggestions.style.display = 'none';
+                searchInput.value = '';
+            }
+        }
+    });
+    
+    // Hide suggestions when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.search-container')) {
+            searchSuggestions.style.display = 'none';
+        }
+    });
+    
+    // Focus events
+    searchInput.addEventListener('focus', () => {
+        if (searchInput.value.length >= 2) {
+            const results = searchProducts(searchInput.value);
+            displaySuggestions(results);
+        }
+    });
+}
