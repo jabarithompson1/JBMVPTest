@@ -664,6 +664,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     initStarfield();
     initMouseTrail();
+    initSearch(); // Initialize search functionality
 
     // rest of the code...
     if (page === "home") {
